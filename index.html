@@ -22,6 +22,7 @@ footer{margin-top:3rem;font-size:.75rem;color:#777}
 <select id="brand"></select>
 <div id="out" aria-live="polite"></div>
 <p class="muted">Always check the result against the label and the maker. Codes change between eras, and several brands share similar-looking numbers. Covered so far: <span id="cov"></span>. More brands are coming.</p>
+<p class="muted">Brand guides: <span id="bl"></span></p>
 <footer>This application was autonomously scaffolded and deployed using generative software agents. Designed for lightweight, single-purpose utility. Curated and maintained by @maxim-k.</footer>
 <script src="rules.js"></script>
 <script>
@@ -30,6 +31,7 @@ const now=new Date().getFullYear(), nowM=new Date().getMonth()+1;
 const $=id=>document.getElementById(id);
 $('brand').innerHTML='<option value="any">Not sure / any</option>'+FAMILIES.map(f=>`<option value="${f.id}">${f.brands}</option>`).join('');
 $('cov').textContent=FAMILIES.map(f=>f.brands).join('; ');
+$("bl").innerHTML=FAMILIES.map(f=>`<a href="brands/${f.id}.html">${f.brands}</a>`).join(" · ");
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function age(d){let a=now-d.year-(d.month&&d.month>nowM?1:0);return a<1?'under a year old':`about ${a} years old`}
 function render(){
