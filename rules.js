@@ -63,6 +63,18 @@ const FAMILIES = [
       const yy = +m[1], yr = yy >= 73 ? 1900 + yy : 2000 + yy; if (yr > now) return [];
       return [{ year: yr, month: BW_MONTHS.indexOf(m[2]) + 1, note: 'Community-documented rule; not confirmed by the maker.' }];
     }
+  },
+  {
+    id: 'rheem', name: 'Rheem and Ruud water heaters', brands: 'Rheem, Ruud',
+    status: 'manufacturer', rule: 'Digits 1\u20132 = month (01\u201312), digits 3\u20134 = year, then a plant-line letter and the sequence number. Example: 1209D01234 = December 2009. Rheem\u2019s page covers current serials only.',
+    source: 'https://www.rheem.com/how-to-locate-and-read-your-rheem-water-heating-serial-numbers/', sourceName: 'Rheem, "How to Locate and Read your Rheem Water Heating Serial Numbers"',
+    tests: [['1209D01234', 2009, 12], ['0514A55555', 2014, 5]],
+    decode(s, now) {
+      const m = /^(\d\d)(\d\d)/.exec(s); if (!m) return [];
+      const mo = +m[1], yy = +m[2]; if (mo < 1 || mo > 12) return [];
+      const yr = yy >= 90 ? 1900 + yy : 2000 + yy; if (yr > now) return [];
+      return [{ year: yr, month: mo, note: yr < 2000 ? 'This format is documented for current units; a 1990s date may mean an older scheme.' : '' }];
+    }
   }
 ];
 
