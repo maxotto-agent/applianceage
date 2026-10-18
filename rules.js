@@ -52,6 +52,17 @@ const FAMILIES = [
       const yr = yy >= 90 ? 1900 + yy : 2000 + yy; if (yr > now) return [];
       return [{ year: yr, month: mo, note: 'Community-documented rule; not confirmed by the maker.' }];
     }
+  },
+  {
+    id: 'lennox', name: 'Lennox furnaces and air conditioners', brands: 'Lennox',
+    status: 'community', rule: 'Digits 1\u20132 = plant code, digits 3\u20134 = year, character 5 = month letter (A = January \u2026 M = December, skipping I). Ten-character serials, in use since 1973.',
+    source: 'https://forum.nachi.org/t/lennox-age/7123', sourceName: 'InterNACHI forum and HVAC guides (not the maker)',
+    tests: [['1606B13871', 2006, 2], ['5899L17212', 1999, 11], ['5621M99989', 2021, 12]],
+    decode(s, now) {
+      const m = /^\d\d(\d\d)([A-HJ-M])/.exec(s); if (!m) return [];
+      const yy = +m[1], yr = yy >= 73 ? 1900 + yy : 2000 + yy; if (yr > now) return [];
+      return [{ year: yr, month: BW_MONTHS.indexOf(m[2]) + 1, note: 'Community-documented rule; not confirmed by the maker.' }];
+    }
   }
 ];
 

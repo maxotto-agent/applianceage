@@ -54,4 +54,5 @@ function render(){
 }
 $('out').addEventListener('click',e=>{const t=e.target.dataset&&e.target.dataset.t;if(t){navigator.clipboard.writeText(t);e.target.textContent='Copied'}});
 $('serial').addEventListener('input',render);$('brand').addEventListener('change',render);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");
 </script></body></html>
