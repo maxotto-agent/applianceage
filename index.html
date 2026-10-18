@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How old is my water heater or furnace? Decode the serial number</title>
+<meta name="description" content="Type a water heater, furnace or AC serial number and get the manufacture month and year, the rule used and the source. Runs in your browser; nothing is uploaded.">
+<style>
+body{font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:0 auto;padding:1rem;color:#1a1a1a}
+input,select{font:inherit;padding:.6rem;border:1px solid #888;border-radius:6px;width:100%;box-sizing:border-box;margin:.25rem 0 .75rem}
+input{font-size:1.25rem;letter-spacing:.05em;text-transform:uppercase}
+.card{border:1px solid #bbb;border-radius:8px;padding:1rem;margin:1rem 0}
+.big{font-size:1.5rem;font-weight:600;margin:0}
+.hl{background:#ffe08a;padding:0 .1em;border-radius:3px;font-family:monospace}
+.tag{font-size:.8rem;border-radius:4px;padding:.1rem .4rem;background:#e6f2e6}.tag.c{background:#f6ead0}
+small,.muted{color:#555}button{font:inherit;padding:.3rem .7rem;margin-top:.5rem}
+footer{margin-top:3rem;font-size:.75rem;color:#777}
+</style></head><body>
+<h1>How old is my water heater or furnace?</h1>
+<p>Type the serial number from the rating plate. This page reads the build date out of it, shows which characters it used and links the rule. It runs entirely in your browser, works offline once loaded, and sends nothing anywhere.</p>
+<label for="serial">Serial number</label>
+<input id="serial" autocomplete="off" autocapitalize="characters" placeholder="e.g. 1719106145074" autofocus>
+<label for="brand">Brand</label>
+<select id="brand"></select>
+<div id="out" aria-live="polite"></div>
+<p class="muted">Always check the result against the label and the maker. Codes change between eras, and several brands share similar-looking numbers. Covered so far: <span id="cov"></span>. More brands are coming.</p>
+<footer>This application was autonomously scaffolded and deployed using generative software agents. Designed for lightweight, single-purpose utility. Curated and maintained by @maxim-k.</footer>
+<script src="rules.js"></script>
+<script>
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const now=new Date().getFullYear(), nowM=new Date().getMonth()+1;
+const $=id=>document.getElementById(id);
+$('brand').innerHTML='<option value="any">Not sure / any</option>'+FAMILIES.map(f=>`<option value="${f.id}">${f.brands}</option>`).join('');
+$('cov').textContent=FAMILIES.map(f=>f.brands).join('; ');
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function age(d){let a=now-d.year-(d.month&&d.month>nowM?1:0);return a<1?'under a year old':`about ${a} years old`}
+function render(){
+  const raw=$('serial').value, s=raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(s.length<4){$('out').innerHTML='';return}
+  const res=decodeSerial(raw,$('brand').value,now);
+  if(!res.length){$('out').innerHTML='<div class="card">No rule in this tool fits that serial. Check the brand, or the number may use a format not covered yet.</div>';return}
+  $('out').innerHTML=res.map((r,i)=>{
+    const f=r.family, n=r.dates.length;
+    const lead=f.id==='bradford'?2:4;
+    const head=esc(s.slice(0,lead)), tail=esc(s.slice(lead));
+    const dates=r.dates.map(d=>{
+      const when=(d.month?MONTHS[d.month-1]+' ':'')+d.year;
+      return `<p class="big">${n>1?'Either ':''}${when}</p><p>${age(d)}${d.week?` (week ${d.week})`:''}${d.note?`<br><small>${esc(d.note)}</small>`:''}</p>`;
+    }).join(n>1?'<p class="muted">or</p>':'');
+    const txt=`${f.brands} serial ${s}: ${r.dates.map(d=>(d.month?MONTHS[d.month-1]+' ':'')+d.year).join(' or ')} (decoded per ${f.sourceName}; verify on label)`;
+    return `<div class="card"><strong>${f.name}</strong> <span class="tag ${f.status==='manufacturer'?'':'c'}">${f.status==='manufacturer'?'rule from the maker':'community-documented rule'}</span>
+    <p>Characters read: <span class="hl">${head}</span>${tail}</p>${dates}
+    <p><small>Rule: ${esc(f.rule)}<br>Source: <a href="${f.source}" rel="noopener">${esc(f.sourceName)}</a></small></p>
+    <button data-t="${esc(txt)}">Copy for report</button></div>`}).join('')+
+    (res.length>1?'<p class="muted">Several rules fit this serial. Choose the brand to narrow it down.</p>':'');
+}
+$('out').addEventListener('click',e=>{const t=e.target.dataset&&e.target.dataset.t;if(t){navigator.clipboard.writeText(t);e.target.textContent='Copied'}});
+$('serial').addEventListener('input',render);$('brand').addEventListener('change',render);
+</script></body></html>
