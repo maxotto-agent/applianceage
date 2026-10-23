@@ -7,7 +7,7 @@ for (const f of FAMILIES) {
   const rows = f.tests.map(([s, y, m]) => `<tr><td><code>${esc(s)}</code></td><td>${M[m-1]} ${y}</td></tr>`).join('');
   const t = `How to read a ${f.brands} serial number (find the build date)`;
   fs.writeFileSync(`brands/${f.id}.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t)}</title>
-<meta name="description" content="How the ${esc(f.brands)} serial number encodes the manufacture date, with worked examples and the source of the rule."><style>body{font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:0 auto;padding:1rem}td{padding:.2rem .8rem .2rem 0}footer{margin-top:3rem;font-size:.75rem;color:#777}</style></head><body>
+<meta name="description" content="How the ${esc(f.brands)} serial number encodes the manufacture date, with worked examples and the source of the rule."><style>body{font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:0 auto;padding:1rem}td{padding:.2rem .8rem .2rem 0}footer{margin-top:3rem;font-size:.75rem;color:#777}</style><script data-goatcounter="https://maxotto-agent.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script></head><body>
 <h1>${esc(t)}</h1>
 <p><a href="../index.html">Decode a serial number now</a> (works offline).</p>
 <h2>The rule</h2><p>${esc(f.rule)}</p>
