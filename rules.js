@@ -65,6 +65,18 @@ const FAMILIES = [
     }
   },
   {
+    id: 'trane', name: 'Trane and American Standard furnaces and air conditioners (2010 and later)', brands: 'Trane, American Standard',
+    status: 'community', rule: 'Characters 1\u20132 = year, characters 3\u20134 = week of the year (01\u201353). Example: 11241KADBB = week 24 of 2011. Applies to units made in 2010 or later; earlier serials use a different scheme that sources disagree on, so this tool does not decode them.',
+    source: 'https://www.pickhvac.com/hvac/age-serial-number/trane/', sourceName: 'Third-party HVAC guide (not the maker)',
+    tests: [['11241KADBB', 2011, 6], ['2005ABCDE', 2020, 1]],
+    decode(s, now) {
+      const m = /^(\d\d)(\d\d)/.exec(s); if (!m) return [];
+      const yr = 2000 + +m[1], wk = +m[2];
+      if (yr < 2010 || yr > now || wk < 1 || wk > 53) return [];
+      return [{ year: yr, month: weekToMonth(wk), week: wk, note: 'Community-documented rule; not confirmed by the maker.' }];
+    }
+  },
+  {
     id: 'rheem', name: 'Rheem and Ruud water heaters', brands: 'Rheem, Ruud',
     status: 'manufacturer', rule: 'Digits 1\u20132 = month (01\u201312), digits 3\u20134 = year, then a plant-line letter and the sequence number. Example: 1209D01234 = December 2009. Rheem\u2019s page covers current serials only.',
     source: 'https://www.rheem.com/how-to-locate-and-read-your-rheem-water-heating-serial-numbers/', sourceName: 'Rheem, "How to Locate and Read your Rheem Water Heating Serial Numbers"',
